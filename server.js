@@ -2,8 +2,14 @@
 require('dotenv').config()
 
 const express = require('express')
+const bodyParser = require('body-parser')
 const app = express()
 const LISTEN_PORT = 3000
+var db = require('./model/Database')  
+var adminRoutes = require('./routes/admin')
+
+app.use(bodyParser.json())
+app.use('/admin', adminRoutes)
 
 app.get('/', (req, res) => { 
     res.send('liform api 1.0 (hackrice)')
