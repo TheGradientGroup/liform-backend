@@ -2,7 +2,7 @@ const express = require('express');
 const app = express.Router();
 const UserSubDoc = require('../model/UserSubsDoc')
 
-app.post('/upload', (req, res) => {
+app.post('/upload', async (req, res) => {
     if (!req.body) {
         res.status(401).json({ error: 'no-params' })
         return
@@ -24,3 +24,5 @@ app.post('/upload', (req, res) => {
         res.status(401).json({ error: 'db-write-error' })
     }
 })
+
+module.exports = app;
