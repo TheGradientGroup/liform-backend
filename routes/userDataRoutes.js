@@ -1,5 +1,5 @@
-const express = require('express');
-const app = express.Router();
+const express = require('express')
+const app = express.Router()
 const UserSubDoc = require('../model/UserSubsDoc')
 
 app.post('/upload', async (req, res) => {
@@ -7,7 +7,6 @@ app.post('/upload', async (req, res) => {
         res.status(401).json({ error: 'no-params' })
         return
     }
-    // TODO: Validate document
     if (!(req.body['drgCode'] && req.body['hospitalId'] && req.body['cost'])) {
         res.status(400).json({ error: 'not-all-params-specified' })
     }
@@ -19,10 +18,10 @@ app.post('/upload', async (req, res) => {
     const userDoc = new UserSubDoc(uploadData)
     try {
         await userDoc.save()
-        req.status(200).json({ success: true })
+        res.status(200).json({ success: true })
     } catch (e) {
-        res.status(401).json({ error: 'db-write-error' })
+        res.status(500).json({ error: 'db-write-error' })
     }
 })
 
-module.exports = app;
+module.exports = app
