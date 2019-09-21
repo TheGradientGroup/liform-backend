@@ -15,6 +15,6 @@ const userSubsSchema = new mongoose.Schema({
     }
 })
 
-var UserSubsDoc = mongoose.model('user_subs', userSubsSchema)
+var UserSubsDoc = mongoose.model('user_sub', userSubsSchema)
 
 module.exports = UserSubsDoc
