@@ -2,7 +2,7 @@ let mongoose = require('mongoose')
 
 require('dotenv').config()
 
-const CONNECT_STRING = `mongodb+srv://${process.env.MONGODB_USER}:${process.env.MONGODB_PASS}@${process.env.MONGODB_URL}/test?retryWrites=true&w=majority`
+const CONNECT_STRING = `mongodb+srv://${process.env.MONGODB_USER}:${process.env.MONGODB_PASS}@${process.env.MONGODB_URL}/liform?retryWrites=true&w=majority`
 
 class Database {
 	constructor() {
