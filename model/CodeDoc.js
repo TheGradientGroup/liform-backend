@@ -1,6 +1,6 @@
 let mongoose = require('mongoose')
 
-const CodeIndexDoc = new mongoose.Schema({
+const codeSchema = new mongoose.Schema({
     code: {
         type: String,
         required: true
@@ -15,4 +15,6 @@ const CodeIndexDoc = new mongoose.Schema({
     }
 })
 
-module.exports = CodeIndexDoc
+var CodeDoc = mongoose.model('code', codeSchema)
+
+module.exports = CodeDoc

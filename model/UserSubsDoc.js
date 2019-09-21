@@ -1,6 +1,6 @@
 let mongoose = require('mongoose')
 
-const UserSubsDoc = new mongoose.Schema({
+const userSubsSchema = new mongoose.Schema({
     code: {
         type: String,
         required: true
@@ -14,5 +14,7 @@ const UserSubsDoc = new mongoose.Schema({
         required: true
     }
 })
+
+var UserSubsDoc = mongoose.model('user_subs', userSubsSchema)
 
 module.exports = UserSubsDoc

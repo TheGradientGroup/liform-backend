@@ -1,6 +1,6 @@
 let mongoose = require('mongoose')
 
-const HospitalDoc = new mongoose.Schema({
+const hospitalDocSchema = new mongoose.Schema({
     name: {
         type: String,
         required: true
@@ -26,5 +26,7 @@ const HospitalDoc = new mongoose.Schema({
         of: Number
     }
 })
+
+var HospitalDoc = mongoose.model('hospitals', hospitalDocSchema)
 
 module.exports = HospitalDoc
