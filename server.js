@@ -7,9 +7,11 @@ const app = express()
 const LISTEN_PORT = 3000
 var db = require('./model/Database')  
 var adminRoutes = require('./routes/admin')
+const searchRoute = require('./routes/search')
 
 app.use(bodyParser.json())
 app.use('/admin', adminRoutes)
+app.use('/search', searchRoute)
 
 app.get('/', (req, res) => { 
     res.send('liform api 1.0 (hackrice)')
