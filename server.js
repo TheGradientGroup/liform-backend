@@ -4,7 +4,7 @@ require('dotenv').config()
 const express = require('express')
 const bodyParser = require('body-parser')
 const app = express()
-const LISTEN_PORT = 3000
+const LISTEN_PORT = process.env.PORT
 var db = require('./model/Database')  
 var adminRoutes = require('./routes/admin')
 const searchRoute = require('./routes/search')
