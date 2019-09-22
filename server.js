@@ -10,6 +10,8 @@ var adminRoutes = require('./routes/admin')
 const searchRoute = require('./routes/search')
 const proceduresRoute = require('./routes/procedures')
 
+app.use(cors({origin:'*'}));
+
 app.use(bodyParser.json())
 app.use('/admin', adminRoutes)
 app.use('/search', searchRoute)
