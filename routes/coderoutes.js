@@ -1,8 +1,8 @@
 const express = require('express')
-const app = express.Router()
+const router = express.Router()
 const DRGCodeInfo = require('../model/DRGCodeInfo')
 
-app.post('/create', (req, res) => { 
+router.post('/create', (req, res) => { 
     if (!req.body) {
         res.status(401).json({ error: 'no-params' })
         return
@@ -38,7 +38,7 @@ app.post('/create', (req, res) => {
     }
 })
 
-app.post('/update', (req, res) => { 
+router.post('/update', (req, res) => { 
     if (!req.body) {
         res.status(401).json({ error: 'no-params' })
         return
@@ -79,4 +79,4 @@ app.post('/update', (req, res) => {
     }
 })
 
-module.exports = app
+module.exports = router

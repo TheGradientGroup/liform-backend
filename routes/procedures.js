@@ -1,7 +1,7 @@
 const express = require('express')
 const HospitalInfo = require('../model/HospitalInfo')
 
-const route = express()
+const router = express.Router()
 
 const handleProcedures = async (req, res) => {
     const hospitalId = req.params.hospitalId || req.query.hospitalId || req.body.hospitalId
@@ -34,8 +34,8 @@ const handleProcedures = async (req, res) => {
  * 
  * @returns The average cost of the given procedure
  */
-route.get('/:hospitalId?/:drg?', handleProcedures)
+router.get('/:hospitalId?/:drg?', handleProcedures)
 
 // route.post('/:hospitalId?/:drg?', handleProcedures)
 
-module.exports = route
+module.exports = router
