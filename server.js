@@ -9,8 +9,9 @@ var db = require('./model/Database')
 var adminRoutes = require('./routes/admin')
 const searchRoute = require('./routes/search')
 const proceduresRoute = require('./routes/procedures')
+const cors = require('cors')
 
-app.use(cors({origin:'*'}));
+app.use(cors())
 
 app.use(bodyParser.json())
 app.use('/admin', adminRoutes)

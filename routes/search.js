@@ -5,7 +5,7 @@ const {
     findDrgFromQuery
 } = require('../domain/searchUtils')
 
-const route = express()
+const router = express.Router()
 
 const handleSearchRequest = async (req, res) => {
     const searchQuery = req.params.query || req.query.query || req.body.query
@@ -37,8 +37,8 @@ const handleSearchRequest = async (req, res) => {
  * Returns:
  *  - A list of matching DRGCodeInfo, 0 if none exist
  */
-route.get('/:query?', handleSearchRequest)
+router.get('/:query?', handleSearchRequest)
 
-route.post('/:query?', handleSearchRequest)
+router.post('/:query?', handleSearchRequest)
 
-module.exports = route
+module.exports = router

@@ -1,8 +1,8 @@
 const express = require('express')
-const route = express()
+const router = express.Router()
 
 const handleHospitalRequest = async (req, res) => {
-    const hospitalId = req.params.id || req.query.hospitalId ||;
+    const hospitalId = req.params.id || req.query.hospitalId
     if (typeof hospitalId !== 'undefined') {
         // Fetch hospital by ID
         return
@@ -14,8 +14,8 @@ const handleHospitalRequest = async (req, res) => {
  * 
  * If a given id is provided, data for that hospital is fetched.
  */
-route.get('/hospitals/:id?', handleHospitalRequest)
+router.get('/hospitals/:id?', handleHospitalRequest)
 
-route.post('/hospitals/:id?', handleHospitalRequest)
+router.post('/hospitals/:id?', handleHospitalRequest)
 
 module.exports = app

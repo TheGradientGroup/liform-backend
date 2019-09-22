@@ -1,8 +1,8 @@
 const express = require('express');
-const app = express.Router()
+const router = express.Router()
 const HospitalDoc = require('../model/HospitalInfo')
 
-app.post('/submission/upload', async (req, res) => {
+router.post('/submission/upload', async (req, res) => {
     if (!req.body) {
         res.status(400).json({ error: 'no-params' })
         return
@@ -34,4 +34,4 @@ app.post('/submission/upload', async (req, res) => {
     }
 })
 
-module.exports = app
+module.exports = router

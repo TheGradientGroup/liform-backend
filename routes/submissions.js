@@ -1,8 +1,8 @@
 const express = require('express')
-const app = express.Router()
+const router = express.Router()
 const UserSubDoc = require('../model/UserSubsDoc')
 
-app.post('/upload', async (req, res) => {
+router.post('/upload', async (req, res) => {
     if (!req.body) {
         res.status(401).json({ error: 'no-params' })
         return
@@ -24,4 +24,4 @@ app.post('/upload', async (req, res) => {
     }
 })
 
-module.exports = app
+module.exports = router
