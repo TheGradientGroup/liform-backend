@@ -30,7 +30,7 @@ router.post('/upload', (req, res) => {
         costTable
     })
     info.save()
-        .then(() => res.sendStatus(200)
+        .then(() => res.sendStatus(200))
         .catch(() => res.status(500).json({ error: 'db-write-error' }))
 })
 
