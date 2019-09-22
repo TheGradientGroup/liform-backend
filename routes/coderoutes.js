@@ -1,6 +1,6 @@
-var express = require('express')
-var app = express.Router()
-var CodeDoc = require('../model/CodeDoc')
+const express = require('express')
+const app = express.Router()
+const DRGCodeInfo = require('../model/DRGCodeInfo')
 
 app.post('/create', (req, res) => { 
     if (!req.body) {
@@ -25,7 +25,7 @@ app.post('/create', (req, res) => {
             if (bodyKeys.includes('desc_human')) { 
                 docData.desc_human = req.body.desc_human
             }
-            var doc = new CodeDoc(docData)
+            var doc = new DRGCodeInfo(docData)
             doc.save().then(
                 () => { res.status(200).json({ success: true }) }
             ).catch(
