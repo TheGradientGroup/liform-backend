@@ -9,6 +9,7 @@ var db = require('./model/Database')
 var adminRoutes = require('./routes/admin')
 const searchRoute = require('./routes/search')
 const proceduresRoute = require('./routes/procedures')
+const hospitalsRoute = require('./routes/hospitals')
 const cors = require('cors')
 
 app.use(cors())
@@ -17,6 +18,7 @@ app.use(bodyParser.json())
 app.use('/admin', adminRoutes)
 app.use('/search', searchRoute)
 app.use('/procedures', proceduresRoute)
+app.use('/hospitals', hospitalsRoute)
 
 app.get('/', (req, res) => { 
     res.send('liform api 1.0 (hackrice)')
