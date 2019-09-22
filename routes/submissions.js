@@ -7,12 +7,12 @@ router.post('/upload', async (req, res) => {
         res.status(401).json({ error: 'no-params' })
         return
     }
-    if (!(req.body['drgCode'] && req.body['hospitalId'] && req.body['cost'])) {
+    if (!(req.body['drg'] && req.body['hospitalID'] && req.body['cost'])) {
         res.status(400).json({ error: 'not-all-params-specified' })
     }
     const uploadData = {
-        drgCode: req.body.drgCode,
-        hospitalId: req.body.hospitalId,
+        code: req.body.drg,
+        hospitalID: req.body.hospitalID,
         cost: req.body.cost,
     }
     const userDoc = new UserSubDoc(uploadData)

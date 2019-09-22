@@ -12,10 +12,6 @@ const userSubsSchema = new mongoose.Schema({
     cost: {
         type: Number,
         required: true
-    },
-    stars: {
-        type: Number,
-        required: true
     }
 })
 
