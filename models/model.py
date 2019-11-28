@@ -1,14 +1,21 @@
+import os
+
 from pymodm import connect, fields, MongoModel, EmbeddedMongoModel
 from pymongo import TEXT
 from pymongo.operations import IndexModel
 
-connect('mongodb+srv://multifaction:nQTsVcsLVnMiCtTE@cluster0-q8wl6.mongodb.net/test?retryWrites=true&w=majority')
+connect(
+    f'mongodb+srv://{os.environ["MONGO_USER"]}:{os.environ["MONGO_PWD"]}@cluster0-q8wl6.mongodb.net/liform_test?retryWrites=true&w=majority')
 
 
 class DRG(MongoModel):
     drg = fields.IntegerField()
     name = fields.CharField()
     human_name = fields.CharField()
+
+    class Meta:
+        # Text index on content can be used for text search.
+        indexes = [IndexModel([('human_name', TEXT)])]
 
 
 class DRGData(EmbeddedMongoModel):
@@ -27,3 +34,4 @@ class Hospital(MongoModel):
     class Meta:
         # Text index on content can be used for text search.
         indexes = [IndexModel([('name', TEXT)])]
+
