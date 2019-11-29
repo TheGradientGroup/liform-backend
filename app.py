@@ -2,15 +2,17 @@ from io import StringIO
 
 import pandas as pd
 from flask import Flask, Response, request, jsonify
+from flask_cors import CORS
 
 import docs
 import models.model as model
 
 app = Flask(__name__)
+CORS(app)
 
 
 @app.route('/')
-def hello_world():
+def hi():
     res = 'Liform API 1.0'
     return Response(res, content_type='text/plain')
 
@@ -40,7 +42,7 @@ def search_drgs(query):
     docs = model.DRG.objects.raw({'$text': {'$search': query}})
     docs_arr = []
     for doc in docs:
-        if len(docs_arr) > 5:
+        if len(docs_arr) > 15:
             break
         cur_doc = doc.to_son().to_dict()
         del cur_doc['_id']
