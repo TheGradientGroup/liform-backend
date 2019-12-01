@@ -57,6 +57,24 @@ def search_drgs(query):
 def search_drgs_doc():
     return Response(docs.search_drgs.doc(), content_type='text/plain')
 
+@app.route('/info/<drg>')
+def drg_info(drg):
+    try:
+        objects = model.DRG.objects.raw({'drg': int(drg)})
+        obj = next(objects).to_son().to_dict()
+        del obj['_id']
+        del obj['_cls']
+        return jsonify(obj)
+    except (StopIteration, ValueError):
+        return jsonify({'error': 'not-found'}), 404
+
+
+@app.route('/import/step/1', methods=['POST'])
+def import_step1():
+    # if request.content_type != 'multipart/form-data':
+    #     return jsonify({'error': 'invalid-content-type'}), 400
+    df = pd.read_excel(request.files['sheet'])
+    return jsonify(df.columns.values.tolist())
 
 @app.errorhandler(405)
 def method_not_allowed(e):
