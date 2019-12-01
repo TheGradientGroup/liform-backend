@@ -28,6 +28,7 @@ class Hospital(MongoModel):
     lat = fields.CharField()
     lon = fields.CharField()
     city = fields.CharField()
+    state = fields.CharField()
     avg_reported = fields.EmbeddedDocumentListField(DRGData)
     avg_user = fields.EmbeddedDocumentListField(DRGData)
 
