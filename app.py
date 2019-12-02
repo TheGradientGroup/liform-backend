@@ -42,7 +42,6 @@ def import_drgs_doc():
 
 @app.route('/search/drgs/<query>')
 def search_drgs(query):
-    print(query)
     docs = model.DRG.objects.raw({'$text': {'$search': query}})
     docs_arr = []
     for doc in docs:
@@ -71,7 +70,7 @@ def drg_info(drg):
         del obj['_cls']
         return jsonify(obj)
     except (StopIteration, ValueError):
-        return jsonify({'error': 'not-found'}), 404
+        return jsonify({'error': 'drg-not-found'}), 404
 
 
 @app.route('/import/step/1', methods=['POST'])
@@ -140,8 +139,7 @@ def nearme_drg(drg, lat, lon):
 def national_drg_stats(drg):
     drg_ref = list(model.DRG.objects.raw({'drg': int(drg)}))
     if len(drg_ref) == 0 or len(drg_ref) > 1:
-        return 'none.', 200
-    print(drg_ref)
+        return jsonify({'error': 'drg-not-found'}), 404
     query = model.Hospital.objects.aggregate(
         {
             '$match': {
@@ -159,8 +157,33 @@ def national_drg_stats(drg):
             }
         }
     )
-    print(list(query))
-    return 'ok', 200
+    return jsonify(list(query)), 200
+
+
+@app.route('/stats/<drg>/<state>', methods=['GET'])
+def state_drg_stats(drg, state):
+    drg_ref = list(model.DRG.objects.raw({'drg': int(drg)}))
+    if len(drg_ref) == 0 or len(drg_ref) > 1:
+        return jsonify({'error': 'drg-not-found'}), 404
+    query = model.Hospital.objects.aggregate(
+        {
+            '$match': {
+                'avg_reported.drg': ObjectId(drg_ref[0]._id),
+                'state': state
+            }
+        },
+        {'$unwind': '$avg_reported'},
+        {'$match': {'avg_reported.drg': ObjectId(drg_ref[0]._id)}},
+        {
+            '$group': {
+                '_id': None,
+                'avg': {'$avg': '$avg_reported.avg'},
+                'min': {'$min': '$avg_reported.avg'},
+                'max': {'$max': '$avg_reported.avg'}
+            }
+        }
+    )
+    return jsonify(list(query)), 200
 
 
 @app.errorhandler(405)
