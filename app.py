@@ -1,8 +1,12 @@
 from io import StringIO
 
+import os
 import pandas as pd
 from flask import Flask, Response, request, jsonify
 from flask_cors import CORS
+from bson.objectid import ObjectId
+from bson.json_util import dumps
+import requests
 
 import docs
 import models.model as model
@@ -57,6 +61,7 @@ def search_drgs(query):
 def search_drgs_doc():
     return Response(docs.search_drgs.doc(), content_type='text/plain')
 
+
 @app.route('/info/<drg>')
 def drg_info(drg):
     try:
@@ -71,10 +76,92 @@ def drg_info(drg):
 
 @app.route('/import/step/1', methods=['POST'])
 def import_step1():
-    # if request.content_type != 'multipart/form-data':
-    #     return jsonify({'error': 'invalid-content-type'}), 400
     df = pd.read_excel(request.files['sheet'])
     return jsonify(df.columns.values.tolist())
+
+
+@app.route('/import/step/2', methods=['POST'])
+def import_step2():
+    df = pd.read_excel(request.files['sheet'])
+    if set(request.form.keys()) != {'providerName', 'city', 'state', 'lat', 'lon', 'drgIndex', 'priceIndex'}:
+        return jsonify({'error': 'incomplete-data'}), 400
+    if not request.form['drgIndex'].isdigit() or not request.form['priceIndex'].isdigit():
+        return jsonify({'error': 'incompatible-data-types'}), 400
+    hospital_drgs = []
+    for idx, row in df.iterrows():
+        drg_code = row[int(request.form['drgIndex'])]
+        price = row[int(request.form['priceIndex'])]
+        objs = list(model.DRG.objects.raw({'drg': drg_code}))
+        if not len(objs) == 1:
+            continue
+        hospital_drgs.append(model.DRGData(drg=objs[0], avg=float(price)))
+    new_hospital = model.Hospital(
+        name=request.form['providerName'],
+        city=request.form['city'],
+        state=request.form['state'],
+        location=[float(request.form['lon']), float(request.form['lat'])],  # remember, it's stored lon,lat
+        avg_reported=hospital_drgs
+    )
+    new_hospital.save()
+    return Response('ok', content_type='text/plain')
+
+
+@app.route('/nearme/<drg>/<lat>/<lon>', methods=['GET'])
+def nearme_drg(drg, lat, lon):
+    print(drg, lat, lon)
+    drg_ref = next(model.DRG.objects.raw({'drg': int(drg)}))
+    query = model.Hospital.objects.raw({
+        'location': {
+            '$near': {
+                '$geometry': {
+                    'type': 'Point',
+                    'coordinates': [float(lon), float(lat)]
+                },
+                '$maxDistance': 5000
+            }
+        },
+        'avg_reported.drg': {
+            '$eq': ObjectId(drg_ref._id)
+        }
+    })
+    query = query.project({
+        'name': 1,
+        'city': 1,
+        'state': 1,
+        'location': 1,
+        'avg_reported.$': 1,
+    })
+    results = dumps([x.to_son().to_dict() for x in list(query)])
+    print(results)
+    return Response(results, content_type='application/json'), 200
+
+
+@app.route('/stats/<drg>/national', methods=['GET'])
+def national_drg_stats(drg):
+    drg_ref = list(model.DRG.objects.raw({'drg': int(drg)}))
+    if len(drg_ref) == 0 or len(drg_ref) > 1:
+        return 'none.', 200
+    print(drg_ref)
+    query = model.Hospital.objects.aggregate(
+        {
+            '$match': {
+                'avg_reported.drg': ObjectId(drg_ref[0]._id)
+            }
+        },
+        {'$unwind': '$avg_reported'},
+        {'$match': {'avg_reported.drg': ObjectId(drg_ref[0]._id)}},
+        {
+            '$group': {
+                '_id': None,
+                'avg': {'$avg': '$avg_reported.avg'},
+                'min': {'$min': '$avg_reported.avg'},
+                'max': {'$max': '$avg_reported.avg'}
+            }
+        }
+    )
+    print(list(query))
+    return 'ok', 200
+
 
 @app.errorhandler(405)
 def method_not_allowed(e):

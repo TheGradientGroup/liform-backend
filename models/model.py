@@ -1,7 +1,7 @@
 import os
 
 from pymodm import connect, fields, MongoModel, EmbeddedMongoModel
-from pymongo import TEXT
+from pymongo import TEXT, GEOSPHERE
 from pymongo.operations import IndexModel
 
 connect(
@@ -20,13 +20,12 @@ class DRG(MongoModel):
 
 class DRGData(EmbeddedMongoModel):
     drg = fields.ReferenceField(DRG)
-    avg = fields.IntegerField(min_value=0)
+    avg = fields.FloatField(min_value=0.0)
 
 
 class Hospital(MongoModel):
     name = fields.CharField()
-    lat = fields.CharField()
-    lon = fields.CharField()
+    location = fields.PointField()
     city = fields.CharField()
     state = fields.CharField()
     avg_reported = fields.EmbeddedDocumentListField(DRGData)
@@ -34,5 +33,5 @@ class Hospital(MongoModel):
 
     class Meta:
         # Text index on content can be used for text search.
-        indexes = [IndexModel([('name', TEXT)])]
+        indexes = [IndexModel([('name', TEXT)]), IndexModel([('location', GEOSPHERE)])]
 
