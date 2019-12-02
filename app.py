@@ -107,7 +107,6 @@ def import_step2():
 
 @app.route('/nearme/<drg>/<lat>/<lon>', methods=['GET'])
 def nearme_drg(drg, lat, lon):
-    print(drg, lat, lon)
     drg_ref = next(model.DRG.objects.raw({'drg': int(drg)}))
     query = model.Hospital.objects.raw({
         'location': {
@@ -131,7 +130,6 @@ def nearme_drg(drg, lat, lon):
         'avg_reported.$': 1,
     })
     results = dumps([x.to_son().to_dict() for x in list(query)])
-    print(results)
     return Response(results, content_type='application/json'), 200
 
 
