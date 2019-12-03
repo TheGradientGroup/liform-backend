@@ -1,12 +1,10 @@
 from io import StringIO
 
-import os
 import pandas as pd
+from bson.json_util import dumps
+from bson.objectid import ObjectId
 from flask import Flask, Response, request, jsonify
 from flask_cors import CORS
-from bson.objectid import ObjectId
-from bson.json_util import dumps
-import requests
 
 import docs
 import models.model as model
@@ -82,6 +80,7 @@ def import_step1():
 @app.route('/import/step/2', methods=['POST'])
 def import_step2():
     df = pd.read_excel(request.files['sheet'])
+    print(request.form)
     if set(request.form.keys()) != {'providerName', 'city', 'state', 'lat', 'lon', 'drgIndex', 'priceIndex'}:
         return jsonify({'error': 'incomplete-data'}), 400
     if not request.form['drgIndex'].isdigit() or not request.form['priceIndex'].isdigit():
@@ -90,7 +89,7 @@ def import_step2():
     for idx, row in df.iterrows():
         drg_code = row[int(request.form['drgIndex'])]
         price = row[int(request.form['priceIndex'])]
-        objs = list(model.DRG.objects.raw({'drg': drg_code}))
+        objs = list(model.DRG.objects.raw({'drg': int(drg_code)}))
         if not len(objs) == 1:
             continue
         hospital_drgs.append(model.DRGData(drg=objs[0], avg=float(price)))
@@ -115,7 +114,7 @@ def nearme_drg(drg, lat, lon):
                     'type': 'Point',
                     'coordinates': [float(lon), float(lat)]
                 },
-                '$maxDistance': 5000
+                '$maxDistance': 40000
             }
         },
         'avg_reported.drg': {
